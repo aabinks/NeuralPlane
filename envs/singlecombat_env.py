@@ -17,9 +17,10 @@ from termination_conditions.timeout import Timeout
 from termination_conditions.shutdown import Shutdown
 from utils.utils import wrap_PI, get2d_AO_TA_R, get_AO_TA_R, orientation_reward, range_reward, orientation_fn, distance_fn, enu_to_geodetic, _t2n
 from algorithms.pid.controller import Controller
+from algorithms.utils.device import default_device
 
 
-device = "cuda:0"
+device = default_device()
 
 class SingleCombatEnv(BaseEnv):
     """
@@ -44,16 +45,16 @@ class SingleCombatEnv(BaseEnv):
         self.min_epos = getattr(self.config, 'min_epos', -5000)
         # 血量
         self.blood = 100 * torch.ones(self.n, device=self.device)
-        self.controller = Controller(dt=self.dt, n=self.n, device=device)
+        self.controller = Controller(dt=self.dt, n=self.n, device=self.device)
         self.termination_conditions = [
             Overload(self.config),
             LowAltitude(self.config),
             HighSpeed(self.config),
             LowSpeed(self.config),
             ExtremeState(self.config),
-            Crash(self.config, device),
+            Crash(self.config, self.device),
             Timeout(self.config),
-            Shutdown(self.config, device)
+            Shutdown(self.config, self.device)
             # UnreachTarget(self.config, device)
         ]
 

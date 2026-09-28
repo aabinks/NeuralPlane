@@ -32,8 +32,10 @@ def _get_prepare_config(parser: argparse.ArgumentParser):
             an identifier to distinguish different experiment.
         --seed <int>
             set seed for numpy and torch
+        --mps
+            by default False, will use CPU to train; or else will use Apple Metal (MPS) GPU;
         --cuda
-            by default False, will use CPU to train; or else will use GPU;
+            by default False, will use CPU to train; or else will use CUDA GPU;
         --n-training-threads <int>
             number of training threads working in parallel. by default 1
         --n-rollout-threads <int>
@@ -52,10 +54,12 @@ def _get_prepare_config(parser: argparse.ArgumentParser):
                        help="An identifier to distinguish different experiment.")
     group.add_argument("--seed", type=int, default=1,
                        help="Random seed for numpy/torch")
-    group.add_argument("--device", type=str, default='cuda:0',
-                       help="GPU id")
+    group.add_argument("--device", type=str, default=None,
+                       help="CUDA device id when using --cuda (default cuda:0)")
+    group.add_argument("--mps", action='store_true', default=False,
+                       help="By default False, will use CPU to train; or else will use Apple Metal (MPS) GPU;")
     group.add_argument("--cuda", action='store_true', default=False,
-                       help="By default False, will use CPU to train; or else will use GPU;")
+                       help="By default False, will use CPU to train; or else will use CUDA GPU;")
     group.add_argument("--n-training-threads", type=int, default=1,
                        help="Number of torch threads for training (default 1)")
     group.add_argument("--n-rollout-threads", type=int, default=4,

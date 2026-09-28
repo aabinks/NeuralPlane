@@ -9,6 +9,7 @@ from envs.planning_env import PlanningEnv
 from envs.env_wrappers import GPUVecEnv
 from algorithms.ppo.ppo_actor import PPOActor
 import logging
+from algorithms.utils.device import default_device
 logging.basicConfig(level=logging.DEBUG)
 
 CURRENT_WORK_PATH = os.getcwd()
@@ -31,7 +32,7 @@ def _t2n(x):
 
 episode_rewards = 0
 ego_run_dir = CURRENT_WORK_PATH + "/../scripts/runs/2024-05-15_16-09-20_Control_heading_ppo_v1/episode_149"
-device = "cuda:0"
+device = default_device()
 config = "heading"
 
 env = ControlEnv(num_envs=1, config=config, model='F16', random_seed=5, device=device)
@@ -39,7 +40,7 @@ args = Args()
 
 ego_policy = PPOActor(args, env.observation_space, env.action_space, device=torch.device(device))
 ego_policy.eval()
-ego_policy.load_state_dict(torch.load(ego_run_dir + f"/actor_latest.pt"))
+ego_policy.load_state_dict(torch.load(ego_run_dir + f"/actor_latest.pt", map_location=device))
 
 print("Start render")
 ego_obs = env.reset()

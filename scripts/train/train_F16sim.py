@@ -74,12 +74,14 @@ def main(args):
     np.random.seed(all_args.seed)
     random.seed(all_args.seed)
     torch.manual_seed(all_args.seed)
-    torch.cuda.manual_seed_all(all_args.seed)
 
-    # cuda
-    if all_args.cuda and torch.cuda.is_available():
+    # mps / cuda
+    if all_args.mps and torch.backends.mps.is_available():
+        logging.info("choose to use mps...")
+        device = torch.device("mps")
+    elif all_args.cuda and torch.cuda.is_available():
         logging.info("choose to use gpu...")
-        device = torch.device(all_args.device)  # use cude mask to control using which GPU
+        device = torch.device(all_args.device or "cuda:0")  # use cude mask to control using which GPU
         # torch.set_num_threads(all_args.n_training_threads)
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = True
@@ -87,6 +89,8 @@ def main(args):
         logging.info("choose to use cpu...")
         device = torch.device("cpu")
         # torch.set_num_threads(all_args.n_training_threads)
+    # envs are built from all_args.device, keep them on the same device as the policy
+    all_args.device = str(device)
 
     # run dir
     run_dir = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + '/runs/{}_{}_{}_{}_{}_{}'.

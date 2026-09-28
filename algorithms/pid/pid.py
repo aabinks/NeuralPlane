@@ -1,5 +1,6 @@
 import torch
-device = "cuda:0"
+from algorithms.utils.device import default_device
+device = default_device()
 
 
 class PID:

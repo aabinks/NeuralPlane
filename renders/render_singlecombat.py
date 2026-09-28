@@ -8,6 +8,7 @@ from envs.singlecombat_env import SingleCombatEnv
 from envs.env_wrappers import GPUVecEnv
 from algorithms.ppo.ppo_actor import PPOActor
 import logging
+from algorithms.utils.device import default_device
 logging.basicConfig(level=logging.DEBUG)
 
 CURRENT_WORK_PATH = os.getcwd()
@@ -36,7 +37,7 @@ episode_rewards = 0
 ego_run_dir = CURRENT_WORK_PATH + "/scripts/runs/2024-02-20_19-24-11_SingleCombat_selfplay_ppo_v1"
 enm_run_dir = CURRENT_WORK_PATH + "/scripts/runs/2024-02-20_19-24-11_SingleCombat_selfplay_ppo_v1"
 experiment_name = ego_run_dir.split('/')[-4]
-device = "cuda:0"
+device = default_device()
 
 env = SingleCombatEnv(num_envs=1, config="selfplay", random_seed=0, device=device)
 args = Args()
@@ -45,8 +46,8 @@ ego_policy = PPOActor(args, env.observation_space, env.action_space, device=torc
 enm_policy = PPOActor(args, env.observation_space, env.action_space, device=torch.device(device))
 ego_policy.eval()
 enm_policy.eval()
-ego_policy.load_state_dict(torch.load(ego_run_dir + f"/actor_{ego_policy_index}.pt"))
-enm_policy.load_state_dict(torch.load(enm_run_dir + f"/actor_{enm_policy_index}.pt"))
+ego_policy.load_state_dict(torch.load(ego_run_dir + f"/actor_{ego_policy_index}.pt", map_location=device))
+enm_policy.load_state_dict(torch.load(enm_run_dir + f"/actor_{enm_policy_index}.pt", map_location=device))
 
 
 print("Start render")

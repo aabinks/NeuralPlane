@@ -6,7 +6,8 @@ import sys
 import pdb
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from algorithms.utils.utils import parse_config, get_diff_angle, get_length, get_vector_dot, get_cross_error, wrap_PI
-device = "cuda:0"
+from algorithms.utils.device import default_device
+device = default_device()
 
 
 class L1Controller:

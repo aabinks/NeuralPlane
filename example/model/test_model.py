@@ -9,7 +9,7 @@ from sklearn.metrics import r2_score
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import envs.models.F16.hifi_F16_AeroData as hifi
 
-device = "cuda:0"
+device = "mps" if torch.backends.mps.is_available() else ("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class MLP(nn.Module):
     def __init__(self, in_dim, out_dim, hidden_list):

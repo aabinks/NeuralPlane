@@ -13,7 +13,7 @@ class ControlEnv(BaseEnv):
     """
     ControlEnv is a fly-control env for single agent to do tracking task.
     """
-    def __init__(self, num_envs=1, config='heading', model='F16', random_seed=None, device="cuda:0"):
+    def __init__(self, num_envs=1, config='heading', model='F16', random_seed=None, device=None):
         super().__init__(num_envs, config, model, random_seed, device)
     
     def load(self, random_seed, config, model):

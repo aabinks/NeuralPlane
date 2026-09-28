@@ -18,7 +18,6 @@ class BaseModel(ABC):
 
     def seed(self, random_seed):
         torch.manual_seed(random_seed)
-        torch.cuda.manual_seed_all(random_seed)
         np.random.seed(random_seed)
         random.seed(random_seed)
 

@@ -5,7 +5,8 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import algorithms.pid.pid as pid
 from algorithms.utils.utils import parse_config
-device = "cuda:0"
+from algorithms.utils.device import default_device
+device = default_device()
 
 
 # fix: dt 修改为控制器实际调用周期

@@ -32,7 +32,7 @@ class PlanningEnv(BaseEnv):
     """
     PlanningEnv is a fly-planning env for single agent to do tracking task.
     """
-    def __init__(self, num_envs=1, config='tracking', model='F16', random_seed=None, device="cuda:0"):
+    def __init__(self, num_envs=1, config='tracking', model='F16', random_seed=None, device=None):
         super().__init__(num_envs, config, model, random_seed, device)
         self.low_level_action_space = gym.spaces.Box(low=-np.inf,
                                                      high=np.inf,
@@ -40,8 +40,8 @@ class PlanningEnv(BaseEnv):
         args = Args()
         self.controller = PPOActor(args, self.observation_space, self.low_level_action_space, device=self.device)
         self.controller.eval()
-        self.controller.load_state_dict(torch.load(ego_run_dir + f"/actor_latest.pt"))
-        self.ego_rnn_states = torch.zeros((self.n, 1, 128), device=torch.device(device))
+        self.controller.load_state_dict(torch.load(ego_run_dir + f"/actor_latest.pt", map_location=self.device))
+        self.ego_rnn_states = torch.zeros((self.n, 1, 128), device=self.device)
 
     def load(self, random_seed, config, model):
         if random_seed is not None:

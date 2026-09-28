@@ -10,7 +10,7 @@ import csv
 import matplotlib.pyplot as plt
 from hifi_F16_AeroData import hifi_F16
 import pandas as pd
-device = "cuda:0"
+device = "mps" if torch.backends.mps.is_available() else ("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class MLP(nn.Module):
@@ -170,10 +170,8 @@ def train(train_X, train_Y, file_name):
         adjust_opt(optimizer, epoch)
         for step, data in enumerate(train_loader):
             X, y = data
-            X = X.to(device)
-            X = X.type(torch.cuda.FloatTensor)
-            y = y.to(device)
-            y = y.type(torch.cuda.FloatTensor)
+            X = X.float().to(device)  # MPS has no float64, cast before moving
+            y = y.float().to(device)  # MPS has no float64, cast before moving
             out = model(X)
             loss_value = loss(out, y)
             optimizer.zero_grad()
@@ -202,10 +200,8 @@ def train(train_X, train_Y, file_name):
         model.eval()
         for step, data in enumerate(test_loader):
             X, y = data
-            X = X.to(device)
-            X = X.type(torch.cuda.FloatTensor)
-            y = y.to(device)
-            y = y.type(torch.cuda.FloatTensor)
+            X = X.float().to(device)  # MPS has no float64, cast before moving
+            y = y.float().to(device)  # MPS has no float64, cast before moving
             out = model(X)
             loss_value = loss(out, y)
             test_loss += float(loss_value)
@@ -217,7 +213,10 @@ def train(train_X, train_Y, file_name):
                 pred_all = out
             else:
                 pred_all = torch.cat([pred_all, out])
-            torch.cuda.empty_cache()
+            if device == "mps":
+                torch.mps.empty_cache()
+            elif device.startswith("cuda"):
+                torch.cuda.empty_cache()
         test_y = output_all.cpu().detach().numpy()
         test_pred = pred_all.cpu().detach().numpy()
         test_loss_list.append(test_loss / len(test_loader))

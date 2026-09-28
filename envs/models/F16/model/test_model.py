@@ -8,8 +8,9 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import envs.models.F16.hifi_F16_AeroData as hifi
+from algorithms.utils.device import default_device
 
-device = "cuda:0"
+device = default_device()
 
 class MLP(nn.Module):
     def __init__(self, in_dim, out_dim, hidden_list):

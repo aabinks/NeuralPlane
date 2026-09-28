@@ -5,9 +5,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from control_env import ControlEnv
 import jsbsim
+from algorithms.utils.device import default_device, synchronize, allocated_memory_mb
 
 
-device="cuda:0"
+device = default_device()
+
 
 INIT_U = [
     14.3842921301, 0.0, 999.240528869, 0.0, 0.0680626236787, 0.0, 100.08096494,
@@ -73,7 +75,8 @@ def measure_time_neuralplane(n):
     start_time = time.time()
     for i in tqdm.tqdm(range(500)):
         env.step(input[:, NrStates:])
-    gpu_memory = torch.cuda.memory_allocated(device=device) / 1024 ** 2
+    synchronize(device)
+    gpu_memory = allocated_memory_mb(device)
     elapsed = time.time() - start_time
     return elapsed, gpu_memory
 
@@ -104,7 +107,7 @@ def measure_time_jsbsim(n):
         altitude = fdm["position/h-sl-ft"]
         airspeed = fdm["velocities/u-fps"]
         print(f"Time: {fdm.get_sim_time()} s, Altitude: {altitude} ft, Airspeed: {airspeed} fps")
-    gpu_memory = torch.cuda.memory_allocated(device=device) / 1024 ** 2
+    gpu_memory = allocated_memory_mb(device)
     elapsed = time.time() - start_time
     return elapsed, gpu_memory
 

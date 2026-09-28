@@ -8,6 +8,7 @@ from envs.control_env import ControlEnv
 from envs.env_wrappers import GPUVecEnv
 from algorithms.pid.controller import Controller
 import logging
+from algorithms.utils.device import default_device
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -15,7 +16,7 @@ def _t2n(x):
     return x.detach().cpu().numpy()
 
 episode_rewards = 0
-device = "cuda:0"
+device = default_device()
 
 env = ControlEnv(num_envs=1, config="heading", model='F16', random_seed=0, device=device)
 

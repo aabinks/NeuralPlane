@@ -1,0 +1,13 @@
+# Apple Silicon (M1/M2/M3/M4) — PyTorch with the Metal (MPS) backend.
+# Tested with Python 3.11 on macOS 26. No CUDA / MKL / triton packages.
+torch>=2.1
+torchdiffeq>=0.2.3
+gym==0.26.2
+numpy<2
+pandas
+scipy
+matplotlib
+PyYAML
+tensorboard
+tqdm
+cloudpickle

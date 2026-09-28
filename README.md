@@ -20,6 +20,21 @@ conda env create -f conda_env.yml
 pip install -r requirement.txt
 ```
 
+### Apple Silicon (Metal / MPS)
+NeuralPlane runs on Apple Silicon GPUs through PyTorch's Metal (MPS) backend. No CUDA is needed.
+```bash
+python3.11 -m venv .venv && source .venv/bin/activate
+pip install -r requirements-macos.txt
+python -c "import torch; print(torch.backends.mps.is_available())"  # should print True
+```
+The training scripts in `scripts/` pass `--mps`. Use `--cuda` on NVIDIA machines. Omit both flags to train on the CPU.
+
+When no device is passed, envs, controllers and the F16 aero model choose MPS first, then CUDA, then CPU. Set `NEURALPLANE_DEVICE` to force a device for scripts that have no flag, for example the renders:
+```bash
+NEURALPLANE_DEVICE=cpu python render_control.py
+```
+MPS has no float64 support, so all simulation tensors stay in float32. That was already the case under CUDA.
+
 ***
 
 ## Envs

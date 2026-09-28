@@ -3,7 +3,7 @@ import torch
 import time
 
 HIFI_GLOBAL_TXT_CONTENT = {}
-device = "cuda:0"
+device = "mps" if torch.backends.mps.is_available() else ("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class hifi_F16():

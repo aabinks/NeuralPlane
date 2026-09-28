@@ -120,10 +120,13 @@ def main(args):
     np.random.seed(all_args.seed)
     random.seed(all_args.seed)
     torch.manual_seed(all_args.seed)
-    torch.cuda.manual_seed_all(all_args.seed)
 
-    # cuda
-    if all_args.cuda and torch.cuda.is_available():
+    # mps / cuda
+    if all_args.mps and torch.backends.mps.is_available():
+        logging.info("choose to use mps...")
+        device = torch.device("mps")
+        torch.set_num_threads(all_args.n_training_threads)
+    elif all_args.cuda and torch.cuda.is_available():
         logging.info("choose to use gpu...")
         device = torch.device("cuda:0")  # use cude mask to control using which GPU
         torch.set_num_threads(all_args.n_training_threads)

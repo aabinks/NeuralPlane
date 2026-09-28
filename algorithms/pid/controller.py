@@ -8,7 +8,8 @@ from algorithms.pid.yawController import YawController
 from algorithms.pid.TECS import TECS
 from algorithms.pid.L1Controller import L1Controller
 from algorithms.utils.utils import wrap_2PI, wrap_PI
-device = "cuda:0"
+from algorithms.utils.device import default_device
+device = default_device()
 
 # fix reset controller
 class Controller:

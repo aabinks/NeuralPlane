@@ -2,10 +2,11 @@ import torch
 import torch.nn as nn
 import pandas as pd
 import os
+from algorithms.utils.device import default_device
 
 
 HIFI_GLOBAL_TXT_CONTENT = {}
-device = "cuda:0"
+device = default_device()
 path = os.path.dirname(os.path.realpath(__file__))
 
 
@@ -40,6 +41,7 @@ def unnormalize(X, mean, std):
 class hifi_F16():
     def __init__(self, device=device):
         super().__init__()
+        self.device = torch.device(device)
         self.data = pd.read_csv(path +'/model/mean_std.csv')
         self.Cx_model = MLP(3, 1, [20, 10]).to(device=device)
         self.Cx_model.load_state_dict(torch.load(path + '/model/Cx.pth', map_location=device))
@@ -139,7 +141,7 @@ class hifi_F16():
                 content = content.strip()
                 data_str = [value for value in content.split(' ') if value]
                 data = list(map(float, data_str))
-                data = torch.tensor(data, device=torch.device(device))
+                data = torch.tensor(data, device=self.device)
                 HIFI_GLOBAL_TXT_CONTENT[dat_name] = data
                 return data
         except OSError:

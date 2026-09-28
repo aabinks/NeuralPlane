@@ -2,9 +2,10 @@ import torch
 import time
 import numpy as np
 import cProfile
+from algorithms.utils.device import default_device
 
 profile = cProfile.Profile()
-device = "cuda:0"
+device = default_device()
 
 
 def getHyperCube(X, V, ndinfo):

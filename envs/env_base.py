@@ -8,6 +8,7 @@ import random
 from models.model_base import BaseModel
 from tasks.task_base import BaseTask
 from utils.utils import parse_config, enu_to_geodetic, _t2n
+from algorithms.utils.device import default_device
 
 
 class BaseEnv(gym.Env):
@@ -17,12 +18,14 @@ class BaseEnv(gym.Env):
                  config='heading',
                  model='F16',
                  random_seed=None,
-                 device="cuda:0"):
+                 device=None):
         super().__init__()
         self.config = parse_config(config)
         self.num_envs = num_envs
         self.num_agents = getattr(self.config, 'num_agents', 100)
         self.n = self.num_agents * self.num_envs
+        if device is None:
+            device = default_device()
         self.device = torch.device(device)
 
         self.load(random_seed, config, model)
@@ -34,8 +37,7 @@ class BaseEnv(gym.Env):
         self.create_records = False
 
     def seed(self, random_seed):
-        torch.manual_seed(random_seed)
-        torch.cuda.manual_seed_all(random_seed)
+        torch.manual_seed(random_seed)  # also seeds the MPS generator
         np.random.seed(random_seed)
         random.seed(random_seed)
 
